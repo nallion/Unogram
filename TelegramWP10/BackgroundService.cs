@@ -26,8 +26,14 @@ namespace TelegramWP10
     public sealed class BackgroundService
     {
         public const string CatchUpTaskName = "UnogramCatchUp";
+        /// <summary>
+        /// Полное имя типа фоновой задачи. Обязано совпадать с атрибутом
+        /// EntryPoint в windows.backgroundTasks в Package.appxmanifest —
+        /// хост фоновых задач активирует задачу именно по нему.
+        /// </summary>
+        private const string CatchUpTaskEntryPoint = "UnogramBackground.CatchUpTask";
         /// <summary>Increment whenever the task registration changes.</summary>
-        private const int RegistrationVersion = 4;
+        private const int RegistrationVersion = 5;
 
         /// <summary>Held while this process has a TDLib client open.</summary>
         public const string TdSessionMutexName = "Unogram.TdSession";
@@ -489,9 +495,9 @@ namespace TelegramWP10
         // ------------------------------------------------------------------
 
         /// <summary>
-        /// Registers a single-process TimeTrigger task. No entry point is set:
-        /// activation arrives in App.OnBackgroundActivated, so no separate winmd
-        /// project is required.
+        /// Registers an out-of-process TimeTrigger task whose entry point is
+        /// UnogramBackground.CatchUpTask. The XAML app is not loaded on
+        /// activation, so the whole background memory budget goes to TDLib.
         /// </summary>
         // ================================================================
         // Диагностика регистрации фоновой задачи в планировщике — отдельный,
@@ -574,17 +580,21 @@ namespace TelegramWP10
             {
                 var builder = new BackgroundTaskBuilder();
                 builder.Name = CatchUpTaskName;
-                // Single-process: no TaskEntryPoint, activation arrives in
-                // App.OnBackgroundActivated. The out-of-process variant (a
-                // separate winmd component) never activated on this device —
-                // not one log line across three trigger windows.
+                // Out-of-process: активация уходит в отдельный хост фоновых
+                // задач, который создаёт тип по TaskEntryPoint. Раньше это не
+                // работало — ни одной строки в логе за три окна триггера —
+                // потому что UnogramBackground.winmd вообще не попадал в пакет:
+                // не было ни ProjectReference из Unogram.csproj, ни объявления
+                // windows.backgroundTasks в манифесте. Активировать было нечего.
+                builder.TaskEntryPoint = CatchUpTaskEntryPoint;
                 // No SystemCondition: a condition is not evaluated when the
                 // trigger fires, it defers the task until the system agrees the
                 // condition holds, which on a sleeping phone can be forever.
                 builder.SetTrigger(new TimeTrigger(CatchUpIntervalMinutes, false));
                 var registration = builder.Register();
                 settings["bg_reg_version"] = RegistrationVersion;
-                Diag("Catch-up task registered in-process, v" + RegistrationVersion
+                Diag("Catch-up task registered out-of-process (" + CatchUpTaskEntryPoint
+                     + "), v" + RegistrationVersion
                      + " (" + CatchUpIntervalMinutes + " min)");
                 LogBgTaskDebug("СОЗДАНА новая регистрация в планировщике. taskId=" + registration.TaskId
                     + " name=" + registration.Name + " v" + RegistrationVersion

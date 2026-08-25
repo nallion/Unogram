@@ -1,6 +1,6 @@
 # Increments the revision field of Identity/@Version in Package.appxmanifest.
 #
-#   1.0.37.0  ->  1.0.37.1  ->  1.0.37.2 ...
+#   1.1.0.0  ->  1.1.0.1  ->  1.1.0.2 ...
 #
 # Major/minor/build stay under manual control; only the last field moves. This
 # exists because Windows refuses to install a sideloaded package whose version is

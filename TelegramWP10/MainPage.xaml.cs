@@ -5791,8 +5791,25 @@ namespace TelegramWP10
             }
             sb.Append("</binding>");
 
-            sb.Append("<binding template=\"TileWide\" branding=\"nameAndLogo\">");
-            foreach (var p in list) sb.Append("<text hint-style=\"captionSubtle\">").Append(Line(p, 30, 60)).Append("</text>");
+            // Lock screen detailed status. The user picks one app in lock screen
+            // settings; its text comes from the WIDE binding only - values on small,
+            // medium or large are ignored. Two documented forms exist and both are
+            // emitted here: hint-lockDetailedStatus1..3 on the binding element, and
+            // id="1".."3" on text elements that are immediate children of it.
+            sb.Append("<binding template=\"TileWide\" branding=\"nameAndLogo\"");
+            for (int i = 0; i < Math.Min(3, list.Count); i++)
+                sb.Append(" hint-lockDetailedStatus").Append(i + 1).Append("=\"")
+                  .Append(Line(list[i], 30, 60)).Append("\"");
+            sb.Append(">");
+            // id="1".."3" on the first three lines: the documented alternative to the
+            // hint-* attributes above, and the one Microsoft calls preferred. The text
+            // elements must be immediate children of the wide binding, which they are.
+            // Both forms are emitted because the hints alone did not render on 15254.
+            for (int i = 0; i < list.Count; i++) {
+                sb.Append("<text");
+                if (i < 3) sb.Append(" id=\"").Append(i + 1).Append("\"");
+                sb.Append(" hint-style=\"captionSubtle\">").Append(Line(list[i], 30, 60)).Append("</text>");
+            }
             sb.Append("</binding>");
 
             sb.Append("<binding template=\"TileLarge\" branding=\"nameAndLogo\">");

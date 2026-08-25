@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" IgnorableNamespaces="uap mp uap3">
   <!-- Publisher must match the CN of the signing certificate (see AutoSignAppx in the .csproj) -->
-  <Identity Name="Unogram" Publisher="CN=DevUser" Version="1.0.37.16" ProcessorArchitecture="arm" />
+  <Identity Name="Unogram" Publisher="CN=DevUser" Version="1.1.0.23" ProcessorArchitecture="arm" />
   <mp:PhoneIdentity PhoneProductId="8f3d1c62-4a7e-4b19-9c05-2ed6a4f7b310" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Unogram</DisplayName>
@@ -35,8 +35,28 @@
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#000000" />
-        <uap:LockScreen Notification="badge" BadgeLogo="Assets\Square24x24Logo.png" />
+        <!-- badgeAndTileText, not badge: "badge" only qualifies the app for the
+             lock screen quick-status slots. Detailed status ("Choose an app to
+             show detailed status") lists only apps declaring badgeAndTileText,
+             and it renders the text of the wide tile binding, so the app must
+             also have a Wide310x150Logo - it does, and both tile writers emit a
+             TileWide binding (MainPage.BuildTileXml, CatchUpTask.ApplyTileXml). -->
+        <uap:LockScreen Notification="badgeAndTileText" BadgeLogo="Assets\Square24x24Logo.png" />
       </uap:VisualElements>
+      <!-- Catch-up background task. Out-of-process: the background task host
+           activates it on a TimeTrigger without loading the XAML app, so the
+           whole memory budget goes to TDLib.
+           EntryPoint must match TaskEntryPoint in
+           BackgroundService.RegisterCatchUpTaskAsync and the full type name in
+           UnogramBackground/CatchUpTask.cs. Without this declaration the winmd
+           is not packaged and the task never activates at all. -->
+      <Extensions>
+        <Extension Category="windows.backgroundTasks" EntryPoint="UnogramBackground.CatchUpTask">
+          <BackgroundTasks>
+            <Task Type="timer" />
+          </BackgroundTasks>
+        </Extension>
+      </Extensions>
     </Application>
   </Applications>
   <Capabilities>
@@ -45,10 +65,9 @@
     <uap:Capability Name="videosLibrary" />
     <uap:Capability Name="musicLibrary" />
     <uap3:Capability Name="backgroundMediaPlayback" />
-    <!-- Нужна только для ExtendedExecutionReason.LocationTracking:
-         это единственный режим продлённого выполнения, работающий на
-         Windows 10 Mobile при заблокированном экране. Позиция не
-         считывается и никуда не передаётся. -->
+    <!-- Needed only for ExtendedExecutionReason.LocationTracking: it is the
+         one extended-execution mode that keeps working on Windows 10 Mobile
+         with the screen locked. No position is ever read or transmitted. -->
     <DeviceCapability Name="location" />
     <DeviceCapability Name="microphone" />
     <DeviceCapability Name="webcam" />

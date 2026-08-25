@@ -1,0 +1,23 @@
+# Telegram API credentials - never commit these.
+# Copy Secrets.cs.template to Secrets.cs and fill in your own values.
+Secrets.cs
+
+# Build output
+[Bb]in/
+[Oo]bj/
+AppPackages/
+*.appx
+*.appxbundle
+*.appxsym
+*.appxupload
+
+# Generated at build time by the GenerateRdXml target
+TelegramWP10/Properties/Default.rd.xml
+
+# Signing keys
+*.pfx
+
+# Visual Studio per-user state
+.vs/
+*.user
+*.suo

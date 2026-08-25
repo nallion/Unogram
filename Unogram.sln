@@ -4,6 +4,8 @@ VisualStudioVersion = 15.0.28307.905
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unogram", "TelegramWP10\Unogram.csproj", "{4F0E3D1A-9B2C-4E7B-8D5A-6C9F1A2B3C4D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnogramBackground", "UnogramBackground\UnogramBackground.csproj", "{7C4B9E2D-3A15-4F68-9D07-5B2E1A6C8F34}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -16,6 +18,10 @@ Global
 		{4F0E3D1A-9B2C-4E7B-8D5A-6C9F1A2B3C4D}.Release|ARM.ActiveCfg = Release|ARM
 		{4F0E3D1A-9B2C-4E7B-8D5A-6C9F1A2B3C4D}.Release|ARM.Build.0 = Release|ARM
 		{4F0E3D1A-9B2C-4E7B-8D5A-6C9F1A2B3C4D}.Release|ARM.Deploy.0 = Release|ARM
+		{7C4B9E2D-3A15-4F68-9D07-5B2E1A6C8F34}.Debug|ARM.ActiveCfg = Release|ARM
+		{7C4B9E2D-3A15-4F68-9D07-5B2E1A6C8F34}.Debug|ARM.Build.0 = Release|ARM
+		{7C4B9E2D-3A15-4F68-9D07-5B2E1A6C8F34}.Release|ARM.ActiveCfg = Release|ARM
+		{7C4B9E2D-3A15-4F68-9D07-5B2E1A6C8F34}.Release|ARM.Build.0 = Release|ARM
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
